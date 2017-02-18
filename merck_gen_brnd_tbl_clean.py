@@ -8,6 +8,7 @@ import pandas as pd
 ## runs in python 3.5
 ## need to download the chromium webdriver
 ## reference the location of the executable
+## https://sites.google.com/a/chromium.org/chromedriver/
 path_to_chromedriver = '/Users/Travis/chromedriver'
 chrome = webdriver.Chrome(path_to_chromedriver)
 ## set windows size so it doesn't open in mobile version of set
