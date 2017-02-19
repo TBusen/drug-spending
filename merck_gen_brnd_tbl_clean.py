@@ -9,7 +9,7 @@ import pandas as pd
 ## need to download the chromium webdriver
 ## reference the location of the executable
 ## https://sites.google.com/a/chromium.org/chromedriver/
-path_to_chromedriver = '/Users/Travis/chromedriver'
+path_to_chromedriver = '/Users/Travis/webDrivers/chromedriver'
 chrome = webdriver.Chrome(path_to_chromedriver)
 ## set windows size so it doesn't open in mobile version of set
 # if opens in mobile site then you need to search for a different set of attributes
@@ -30,32 +30,25 @@ url = chrome.page_source
 # do some magic
 soup = BeautifulSoup(url)
 
-text = soup.get_text()
+# find start of table
+table_start = soup.find(class_="drugDrugTitleTrade drug-table")
+# get list of drug names from table body
+# generic and name brand drugs are listed by their html class
+generic_name_drugs = table_start.table.tbody.find_all(class_='LexicompLink_active')
+brand_name_drugs = table_start.table.tbody.find_all(class_='w-border')
 
-# find block of text where drug names are stored
+data = []
 
-def find_drug_text(string,keyword):
-    cleaned_temp = []
-    beg_table = string[string.find(keyword)+11:]
-    all_drugs = beg_table[:beg_table.find(keyword)]
-    temp = all_drugs.split('\n')
+# create list of dictionaries for each row
+for i in range(len(generic_name_drugs)):
+    data.append({table_start.table.thead.th.get_text():generic_name_drugs[i].get_text(),
+                 table_start.table.thead.find(class_='w-border').get_text():brand_name_drugs[i].get_text()})
 
-    for i in temp:
-        if i != '':
-            cleaned_temp.append(i)
-    return cleaned_temp
+# clean up the text
+def initcap(text):
+    return text.str.title()
 
-# parse the list into generic and brand key values
-def parse_text(somelist):
-    lod = []
-    for index, name in enumerate(somelist):
-        if index == 0 or index % 2 == 0:
-            generic = name
-        else:
-            brand = name
-            lod.append({'Generic':generic,'Brand':brand})
-    return lod
+# convert to DataFrame then exort to CSV
+df = pd.DataFrame(data).apply(initcap)
 
-# write to csv
-cleaned_file = parse_text(find_drug_text(text,'BRAND NAMES'))
-pd.DataFrame(cleaned_file).to_csv('/Users/Travis/Downloads/merck_gen_brnd_table_scrape.csv',index=False,header=True,sep='|')
+df.to_csv('/Users/Travis/Downloads/merck_gen_brnd_table_scrape.csv',header=True,index=False,sep='|')
