@@ -1,5 +1,9 @@
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 import time
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -61,3 +65,8 @@ df.to_csv('/Users/Travis/Downloads/merck_gen_brnd_table_scrape.csv',header=True,
 #####################################
 
 ##### Generic drug pop up scraping #####
+
+chrome.find_element_by_xpath("//tbody/tr/td").click()
+
+for i in WebDriverWait(chrome, 6).until(EC.visibility_of_element_located((By.CLASS_NAME, 'lexi-main'))).find_elements_by_xpath("//p"):
+    print(i.text)
