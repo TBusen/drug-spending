@@ -30,6 +30,10 @@ url = chrome.page_source
 # do some magic
 soup = BeautifulSoup(url)
 
+
+
+##### Base xref table scraping #####
+
 # find start of table
 table_start = soup.find(class_="drugDrugTitleTrade drug-table")
 # get list of drug names from table body
@@ -52,3 +56,8 @@ def initcap(text):
 df = pd.DataFrame(data).apply(initcap)
 
 df.to_csv('/Users/Travis/Downloads/merck_gen_brnd_table_scrape.csv',header=True,index=False,sep='|')
+
+
+#####################################
+
+##### Generic drug pop up scraping #####
