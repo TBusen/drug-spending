@@ -8,7 +8,6 @@ import time
 from bs4 import BeautifulSoup
 import pandas as pd
 
-
 ## runs in python 3.5
 ## need to download the chromium webdriver
 ## reference the location of the executable
@@ -67,6 +66,15 @@ df.to_csv('/Users/Travis/Downloads/merck_gen_brnd_table_scrape.csv',header=True,
 ##### Generic drug pop up scraping #####
 
 chrome.find_element_by_xpath("//tbody/tr/td").click()
+drug_detail = []
+#for i in WebDriverWait(chrome, 6).until(EC.visibility_of_element_located((By.CLASS_NAME, 'lexi-main'))).find_elements_by_xpath("//p"):
 
-for i in WebDriverWait(chrome, 6).until(EC.visibility_of_element_located((By.CLASS_NAME, 'lexi-main'))).find_elements_by_xpath("//p"):
-    print(i.text)
+popup = WebDriverWait(chrome, 6).until(EC.visibility_of_element_located((By.CLASS_NAME, 'lexi-main')))
+
+## items to gather:
+# brand names: US, brand names: Canada, Pharmacologic Category, How to break out and format the dosing information, Calculations,
+
+for p in popup.find_elements_by_xpath("//div"):
+    drug_detail.append(p.text)
+
+drug_detail
